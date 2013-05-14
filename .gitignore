@@ -8,3 +8,8 @@
 
 # log
 *.log
+
+*.txt
+
+# temporary
+cavetube.sh
