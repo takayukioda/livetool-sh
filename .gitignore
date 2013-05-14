@@ -1,0 +1,10 @@
+# black list #####
+# backups
+*~
+.*~
+*.bkup
+*swp
+.*swp
+
+# log
+*.log
