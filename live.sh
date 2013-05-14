@@ -15,7 +15,10 @@ report=
 usage()
 {
 	echo "Usage:";
-	echo "  $0 [-h] [-l] [-f fps] [-i insize] [-o outsize] [-g position] [-p file] <start | check>";
+	echo "  $0 [-c /path/to/config] [-h] [-l] [-f fps] [-i insize] [-o outsize] [-g position] [-p file] <start | check>";
+	echo "  -c /path/to/config"
+	echo "    set config directory"
+	echo "    use ${SRC_DIR} by default"
 	echo "  -h"
 	echo "    show usage"
 	echo "  -l"
