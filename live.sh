@@ -2,11 +2,16 @@
 # @author: da0shi
 # @version: 1.0.0
 #
-#
-# about options:
-# 	bufsize = maxrate x 2
-#
 ##################################################
+readonly SRC_DIR=${0%/*}
+CONF_DIR=${SRC_DIR}
+LOG_DIRNAME=log
+ffmpeg=`which ffmpeg`
+profile="default.profile"
+rtmpfile="rtmp.default"
+exec_cmds="exec.list"
+report=
+
 usage()
 {
 	echo "Usage:";
@@ -67,72 +72,118 @@ print_config()
 	else
 		echo "Need to set stream id"
 	fi
-	echo "Using ${RTMP_FILE}"
+	echo "Using ${rtmpfile}"
 }
 
-# Get file path of its own
-SRC_DIR="${0%/*}"
-# Make log directory under the script path
-LOG_DIR="${SRC_DIR}/log"
-if [ ! -d ${LOG_DIR} ]; then
-	mkdir ${LOG_DIR}
-fi
-cd ${SRC_DIR}
+exec_cmd ()
+{
+	local cmd=`which $1`
+	if [ -z ${cmd} ]; then
+		return 1
+	fi
+	shift
+	${cmd} "$*" &
+}
+exec_cmds ()
+{
+	while read line
+	do
+		case $line in
+			\#*)
+				continue ;;
+			\\\\)
+				continue ;;
+			*)
+				exec_cmd ${line} ;;
+		esac
+	done <${exec_cmds}
+}
 
-# Default Properties #####
-profile="default.profile"
-source ${profile}
-source ${RTMP_FILE}
-
-# Initialize OPTIND to check options again
-report=""
-while getopts hlr:i:o:g:p: option
+while getopts c:hlr:i:o:g:p: option
 do
 	case "${option}" in
+		c) #config directory
+			CONF_DIR=${OPTARG}
+			LOG_DIR=${CONF_DIR}/log
+			;;
 		h) #help
 			usage
-			exit 0
-			;;
+			exit 0 ;;
 		l) #log
-			report="-report"
+			f_report="-report"
 			;;
 		r) #ffmpeg option -r
 			if [ ${OPTARG} -gt 0 -a ${OPTARG} -le 50 ]; then
-				fps=${OPTARG}
+				f_fps=${OPTARG}
 			fi
 			;;
 		i) #input size
 			if [ `echo ${OPTARG} | grep "^[0-9]\+x[0-9]\+$"` ]; then
-				insize=${OPTARG}
+				f_insize=${OPTARG}
 			fi
 			;;
 		o) #outpout size
 			if [ `echo ${OPTARG} | grep "^[0-9]\+x[0-9]\+$"` ]; then
-				outsize=${OPTARG}
+				f_outsize=${OPTARG}
 			fi
 			;;
 		g) #grab position
 			if [ `echo ${OPTARG} | grep "^[0-9]\+,[0-9]\+$"` ]; then
-				grab_position=":0.0+${OPTARG}"
+				f_grab_position=":0.0+${OPTARG}"
 			fi
 			;;
 		p) #profile
-			if [ -f "${OPTARG}" ]; then
-				load_profile=${OPTARG}
-				echo "include ${load_profile}"
-			fi
+			f_profile=${OPTARG}
+			echo "include ${f_profile}"
 			;;
 		\?)
 			usage 1>&2
-			exit 1
-			;;
+			exit 1 ;;
 	esac
 done
 # shift arguements to check remaining arguements
-shift `expr "${OPTIND}" - 1`
+shift `expr ${OPTIND} - 1`
 
-if [ ! -z ${load_profile} ]; then
-	source ${load_profile}
+# Load Default #####
+cd ${CONF_DIR}
+. ${profile}
+if [ ${f_profile} -a -f ${f_profile} ]; then
+	. ${f_profile}
+fi
+. ${rtmpfile}
+
+readonly RTMP_URL=${RTMP_URL}
+readonly STREAM=${STREAM}
+
+if [ ! ${ffmpeg} ]; then
+	echo "Error: ffmpeg not found"
+	exit 2
+elif [ ! -f "${ffmpeg}" ]; then
+	echo "Error: ffmpeg not found"
+	exit 2
+elif [ ! -x "${ffmpeg}" ]; then
+	echo "Error: ffmpeg not executable"
+	exit 2
+fi
+
+if [ ! -d ${LOG_DIRNAME} ]; then
+	mkdir ${LOG_DIRNAME}
+fi
+
+if [ ${f_report} ]; then
+	report=${f_report}
+fi
+if [ ${f_fps} ]; then
+	fps=${f_fps}
+fi
+if [ ${f_insize} ]; then
+	insize=${f_insize}
+fi
+if [ ${f_outsize} ]; then
+	outsize=${f_outsize}
+fi
+if [ ${f_grab_position} ]; then
+	grab_position=${f_grab_position}
 fi
 
 if [ $# -eq 0 ]; then
@@ -157,44 +208,10 @@ else
 	exit 1
 fi
 
-#gnome-alsamixer &
-gnome-system-monitor &
-pavucontrol &
-xeyes &
-xclock -digital -strftime "%Y/%m/%d %H:%M" &
+exit 1
+exec_cmds
 
-# ffmpeg options
-# -rtbufsize :
-# -r : fps
-# -f : input file format
-#   => x11grab : use x11grab for display capture
-#   => -show_region 1 : show the captured area
-#   => -s : input frame size
-#   => -i : start point to grab
-# -f : audio source
-#   => -i : sound card
-# -r ${fps} \
-	# -s ${outsize} \
-	# -sws_flags lanczos \
-	# -pix_fmt yuv420p \
-	# -maxrate ${maxrate} \
-	# -bufsize ${bufsize} \
-	# -vcodec ${video_codec} \
-	# -vprofile high \
-	# -vf "unsharp=3:3:0.3" \
-	# -preset slower \
-	# -x264opts ${x264opts} \
-	# -acodec ${audio_codec} \
-	# -ar ${audio_frequency} \
-	# -ab ${audio_bitrate} \
-	# -ac ${audio_channel} \
-	# -threads 2 \
-	# -vsync ${video_sync_method} \
-	# -y \
-	# -f flv "${RTMP_URL}/${STREAM} ${flash_version}" \
-	# -report
-
-/usr/local/bin/ffmpeg \
+${ffmpeg} \
 	-rtbufsize 10MB \
 	-r ${fps} \
 	-f x11grab -show_region 1 \
@@ -208,7 +225,7 @@ xclock -digital -strftime "%Y/%m/%d %H:%M" &
 	-maxrate ${maxrate} \
 	-bufsize ${bufsize} \
 	-vcodec ${video_codec} \
-	-vprofile high \
+	-vprofile ${video_profile} \
 	-vf "unsharp=3:3:0.3" \
 	-preset ${preset} \
 	-x264opts ${x264opts} \
@@ -225,6 +242,6 @@ xclock -digital -strftime "%Y/%m/%d %H:%M" &
 	-f flv "${RTMP_URL}/${STREAM} ${flash_version}" \
 	${report}
 
-if [ -n "${report}" ]; then
-	mv ffmpeg*.log ${LOG_DIR}/.
+if [ ${report} ]; then
+	mv ffmpeg*.log ${LOG_DIRNAME}/
 fi

@@ -1,0 +1,4 @@
+# execute command list
+#pavucontrol
+#xeyes
+#xclock -digital -strftime "%Y/%m/%d %H:%M"
