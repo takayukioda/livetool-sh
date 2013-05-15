@@ -25,7 +25,11 @@ STREAM="xxxxxyyyyyzzzzz"
 
 ##cavetube.sh
 Get your api key from [here](http://gae.cavelis.net/developer).  
-set "apikey" in file "conf" with the api key you've got from link above.
-fill the vars with comment "Required".
+set "apikey" in file "conf" with the api key you've got from link above.  
+fill the vars with comment "Required".  
+```sh
+devkey=xyzxyzXYZXYZ    #Required <- Do NOT Touch
+apikey=******          #Required <- Fill with api key you've got
+title="Live by ffmpeg" #Required <- Make any title you want
 
 Write live description in "default.desc"
