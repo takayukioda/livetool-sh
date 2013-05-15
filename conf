@@ -1,7 +1,7 @@
 sh_option=
-devkey=A6878BAC2B2D4176AB7F9556D7A75C9B
-apikey=H00KF86c
-title="Live from ffmpeg"
+devkey=A6878BAC2B2D4176AB7F9556D7A75C9B #Required
+apikey=H00KF86c #Required
+title="Live from ffmpeg" #Required
 description=default.desc
 tag="ffmpeg"
 id_visible=false
