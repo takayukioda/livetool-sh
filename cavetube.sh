@@ -6,7 +6,7 @@
 # cavetubeの「配信を開始」ボタンを押さなくても配信を開始できるようにする
 # require: live.sh
 # require: curl
-# require: jsontool
+# pre require: jsontool
 # Github Repository: https://github.com/trentm/json
 ##################################################
 CAVETUBE_START_API='http://gae.cavelis.net/api/start'
@@ -15,7 +15,7 @@ if [ -z "${curl}" ]; then
 	echo "Error: curl not found."
 	exit 1
 fi
-json= #`which json`
+json=`which json`
 
 if [ -n "${json}" ]; then
 	config='conf.json'

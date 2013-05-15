@@ -82,7 +82,7 @@ print_config()
 exec_cmd ()
 {
 	local cmd=`which $1`
-	if [ -n "${cmd}" ]; then
+	if [ -z "${cmd}" ]; then
 		return 1
 	fi
 	shift
