@@ -1,0 +1,12 @@
+sh_option=
+devkey=A6878BAC2B2D4176AB7F9556D7A75C9B
+apikey=H00KF86c
+title="Live from ffmpeg"
+description=default.desc
+tag="ffmpeg"
+id_visible=false
+anonymous_only=false
+login_user=false
+thumbnail_slot=0
+test_mode=false
+#socket_id=

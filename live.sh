@@ -82,7 +82,7 @@ print_config()
 exec_cmd ()
 {
 	local cmd=`which $1`
-	if [ -z ${cmd} ]; then
+	if [ -n "${cmd}" ]; then
 		return 1
 	fi
 	shift
@@ -151,7 +151,7 @@ shift `expr ${OPTIND} - 1`
 # Load Default #####
 cd ${CONF_DIR}
 . ${profile}
-if [ ${f_profile} -a -f ${f_profile} ]; then
+if [ -n "${f_profile}" -a -f "${f_profile}" ]; then
 	. ${f_profile}
 fi
 . ${rtmpfile}
@@ -174,19 +174,19 @@ if [ ! -d ${LOG_DIRNAME} ]; then
 	mkdir ${LOG_DIRNAME}
 fi
 
-if [ ${f_report} ]; then
+if [ -n "${f_report}" ]; then
 	report=${f_report}
 fi
-if [ ${f_fps} ]; then
+if [ -n "${f_fps}" ]; then
 	fps=${f_fps}
 fi
-if [ ${f_insize} ]; then
+if [ -n "${f_insize}" ]; then
 	insize=${f_insize}
 fi
-if [ ${f_outsize} ]; then
+if [ -n "${f_outsize}" ]; then
 	outsize=${f_outsize}
 fi
-if [ ${f_grab_position} ]; then
+if [ -n "${f_grab_position}" ]; then
 	grab_position=${f_grab_position}
 fi
 
@@ -245,6 +245,6 @@ ${ffmpeg} \
 	-f flv "${RTMP_URL}/${STREAM} ${flash_version}" \
 	${report}
 
-if [ ${report} ]; then
+if [ -n "${report}" ]; then
 	mv ffmpeg*.log ${LOG_DIRNAME}/
 fi
