@@ -6,7 +6,6 @@
 # cavetubeの「配信を開始」ボタンを押さなくても配信を開始できるようにする
 # require: live.sh
 # require: curl
-# pre require: jsontool
 # Github Repository: https://github.com/trentm/json
 ##################################################
 CAVETUBE_START_API='http://gae.cavelis.net/api/start'
@@ -15,27 +14,9 @@ if [ -z "${curl}" ]; then
 	echo "Error: curl not found."
 	exit 1
 fi
-json=`which json`
 
-if [ -n "${json}" ]; then
-	config='conf.json'
-	setting=${1:-default}
-	devkey=`cat ${config} | ${json} cavetube.${setting}.devkey`
-	apikey=`cat ${config} | ${json} cavetube.${setting}.apikey`
-	title=`cat ${config} | ${json} cavetube.${setting}.title`
-	description=`cat ${config} | ${json} cavetube.${setting}.description`
-	tag=`cat ${config} | ${json} cavetube.${setting}.tag`
-	id_visible=`cat ${config} | ${json} cavetube.${setting}.id_visible`
-	anonymous_only=`cat ${config} | ${json} cavetube.${setting}.anonymous_only`
-	login_user=`cat ${config} | ${json} cavetube.${setting}.login_user`
-	thumbnail_slot=`cat ${config} | ${json} cavetube.${setting}.thumbnail_slot`
-	test_mode=`cat ${config} | ${json} cavetube.${setting}.test_mode`
-	socket_id=`cat ${config} | ${json} cavetube.${setting}.socket_id`
-	sh_option=`cat conf.json | json cavetube.sh_option`
-else
-	config='conf'
-	. ${config}
-fi
+config='conf'
+. ${config}
 
 if [ -z ${devkey} ]; then
 	echo "Error: devkey not set"
