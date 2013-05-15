@@ -11,5 +11,13 @@
 
 *.txt
 
-# temporary
-cavetube.sh
+# config files exclude default
+*.profile
+!defaut.profile
+*.json
+!conf.json
+*.desc
+!default.desc
+rtmp.*
+!rtmp.default
+!exec.list
