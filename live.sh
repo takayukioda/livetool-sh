@@ -86,7 +86,7 @@ exec_cmd ()
 		return 1
 	fi
 	shift
-	${cmd} "$*" &
+	${cmd} $@ &
 }
 exec_cmds ()
 {
@@ -95,7 +95,7 @@ exec_cmds ()
 		case $line in
 			\#*)
 				continue ;;
-			\\\\)
+			\\\\*)
 				continue ;;
 			*)
 				exec_cmd ${line} ;;
