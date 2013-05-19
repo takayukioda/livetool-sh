@@ -38,7 +38,7 @@ usage()
 print_config()
 {
 	echo "  ffmpeg option settings:"
-	echo "  -rtbufsize 10MB"
+	echo "  -rtbufsize ${rtbufsize}"
 	echo "  -r ${fps} (input)"
 	echo "  -f x11grab -show_region 1"
 	echo "  -s ${insize} -i ${grab_position}"
@@ -59,7 +59,7 @@ print_config()
 	echo "  -ab ${audio_bitrate}"
 	echo "  -ac ${audio_channel}"
 	echo "  -nr ${noise_reduction}"
-	echo "  -threads 2"
+	echo "  -threads ${threads}"
 	echo "  -vsync ${video_sync_method}"
 	echo "  -async ${audio_sync_sample_rate}"
 	echo "  -y"
@@ -215,7 +215,7 @@ fi
 exec_cmds
 
 ${ffmpeg} \
-	-rtbufsize 10MB \
+	-rtbufsize ${rtbufsize} \
 	-r ${fps} \
 	-f x11grab -show_region 1 \
 	-s ${insize} -i ${grab_position} \
@@ -237,7 +237,7 @@ ${ffmpeg} \
 	-ab ${audio_bitrate} \
 	-ac ${audio_channel} \
 	-nr ${noise_reduction} \
-	-threads 2 \
+	-threads ${threads} \
 	-vsync ${video_sync_method} \
 	-async ${audio_sync_sample_rate} \
 	-y \

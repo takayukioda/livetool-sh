@@ -4,6 +4,8 @@ outsize="640x480"
 grab_position=":0.0+150,150"
 maxrate="432k"
 bufsize="864k"
+rtbufsize=100MB
+threads=2
 flash_version="flashver=FME/3.0\20(compatible;20FMSc/1.0)"
 
 ## Video
