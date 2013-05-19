@@ -3,6 +3,27 @@ livetool-sh
 
 shellscripts for live streaming by ffmpeg
 
+#Directory
+livetool-sh
+	|-ffmpeg_setup.sh
+	|
+	|-README.md
+	|-live.sh
+	|-default.profile
+	|-exec.list
+	|-rtmp.default
+	|
+	|-cavetube.sh
+	|-conf
+	|-default.desc
+
+#ffmpeg_setup.sh
+"ffmpeg_setup.sh" is based on
+[UbuntuCompilationGuide](https://ffmpeg.org/trac/ffmpeg/wiki/UbuntuCompilationGuide).  
+Wrap each install operation as function.  
+It will clone git repository to "/usr/local/git" where defined as src.  
+And build files will be install at "/usr/local/ffmpeg".
+
 #Requires
 ##live.sh  
 ffmpeg with "--enable-libx264" option.  

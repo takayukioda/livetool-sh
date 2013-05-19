@@ -6,8 +6,8 @@ build=/usr/local/ffmpeg
 
 init_git_repos ()
 {
-	if [ ! -d ${build} ]; then
-		mkdir ${build}
+	if [ ! -d ${src} ]; then
+		mkdir ${src}
 	fi
 	cd ${src}
 	git clone git://git.videolan.org/x264.git
@@ -52,7 +52,10 @@ before_setup ()
 }
 install_x264 ()
 {
-	dir=/usr/local/git/x264
+	if [ ! -d ${build} ]; then
+		mkdir ${build}
+	fi
+	dir=${src}/x264
 	cd ${dir}
 	./configure \
 		--prefix=${build} \
@@ -65,7 +68,10 @@ install_x264 ()
 
 install_fdkaac ()
 {
-	dir=/usr/local/git/fdk-aac
+	if [ ! -d ${build} ]; then
+		mkdir ${build}
+	fi
+	dir=${src}/fdk-aac
 	cd ${dir}
 	autoreconf -fiv && \
 		./configure \
@@ -78,7 +84,10 @@ install_fdkaac ()
 
 install_ffmpeg ()
 {
-	dir=/usr/local/git/ffmpeg
+	if [ ! -d ${build} ]; then
+		mkdir ${build}
+	fi
+	dir=${src}/ffmpeg
 	cd ${dir}
 	./configure \
 		--prefix=${build} \
