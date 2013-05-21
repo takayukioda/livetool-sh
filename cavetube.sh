@@ -10,7 +10,7 @@
 ##################################################
 CAVETUBE_START_API='http://gae.cavelis.net/api/start'
 curl=`which curl`
-if [ -z "${curl}" ]; then
+if [ -x "${curl}" ]; then
 	echo "Error: curl not found."
 	exit 1
 fi
@@ -18,12 +18,12 @@ fi
 config='conf'
 . ${config}
 
-if [ -z ${devkey} ]; then
+if [ -z "${devkey}" ]; then
 	echo "Error: devkey not set"
 	exit 2
 fi
 devkey="devkey=${devkey}"
-if [ -z ${apikey} ]; then
+if [ -z "${apikey}" ]; then
 	echo "Error: apikey not set"
 	exit 2
 fi
@@ -31,7 +31,7 @@ apikey="apikey=${apikey}"
 if [ -z "${title}" ]; then
 	echo "Error: Need to set title"
 	echo -n "Enter the title (leave empty to cancel): "; read title
-	if [ -z ${title} ]; then
+	if [ -z "${title}" ]; then
 		exit 2
 	fi
 fi
