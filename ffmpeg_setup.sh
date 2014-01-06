@@ -60,7 +60,15 @@ install_x264 ()
 	./configure \
 		--prefix=${build} \
 		--bindir=${build}/bin \
-		--enable-static && \
+		--enable-static \
+		--disable-cli \
+		--disable-opencl \
+		--disable-ffms \
+		--disable-lavf \
+		--disable-gpac \
+		--disable-swscale \
+		--disable-avs \
+		&& \
 		make && \
 		make install && \
 		make distclean
