@@ -1,32 +1,45 @@
 #!/bin/bash
+
 # place to clone git repository
-src=/usr/local/git
+readonly SRC=/opt/vendor
+
 # place to install
-build=/usr/local/ffmpeg
+readonly BUILD=/opt/ffmpeg
 
 init_git_repos ()
 {
-	if [ ! -d ${src} ]; then
-		mkdir ${src}
-	fi
-	cd ${src}
+	mkdir_if_not_exists $SRC
+
+	cd ${SRC}
 	git clone git://git.videolan.org/x264.git
 	git clone git://github.com/mstorsjo/fdk-aac.git
 	git clone git://source.ffmpeg.org/ffmpeg.git
 }
-update_git_repos ()
-{
+
+
+mkdir_if_not_exists() {
+	local dir=$1
+	[ ! -d $dir ] && echo "Running: mkdir $dir" && mkdir $dir
+}
+
+cd_and_git_pull() {
+	local repo=$1
+	[ ! -d $SRC/$repo ] && return 1
+	cd $SRC/$repo
+	make distclean
+	git pull
+}
+
+update_git_repos () {
 	for repo in x264 fdk-aac ffmpeg
 	do
-		cd ${src}/${repo}
-		make distclean
-		git pull
+		cd_and_git_pull $repo
 	done
 }
 
-before_setup ()
-{
-	sudo apt-get install \
+install_prerequisites() {
+	sudo apt-get update
+	sudo apt-get install -y \
 		autoconf \
 		automake \
 		build-essential \
@@ -49,17 +62,18 @@ before_setup ()
 		texi2html \
 		yasm \
 		zlib1g-dev
+	sudo apt-get -y upgrade
 }
-install_x264 ()
-{
-	if [ ! -d ${build} ]; then
-		mkdir ${build}
-	fi
-	dir=${src}/x264
+
+install_x264 () {
+	mkdir_if_not_exists $BUILD
+
+	local dir=${SRC}/x264
 	cd ${dir}
+
 	./configure \
-		--prefix=${build} \
-		--bindir=${build}/bin \
+		--prefix=${BUILD} \
+		--bindir=${BUILD}/bin \
 		--enable-static \
 		--disable-cli \
 		--disable-opencl \
@@ -76,14 +90,13 @@ install_x264 ()
 
 install_fdkaac ()
 {
-	if [ ! -d ${build} ]; then
-		mkdir ${build}
-	fi
-	dir=${src}/fdk-aac
+	mkdir_if_not_exists $BUILD
+
+	dir=${SRC}/fdk-aac
 	cd ${dir}
 	autoreconf -fiv && \
 		./configure \
-		--prefix=${build} \
+		--prefix=${BUILD} \
 		--disable-shared && \
 		make && \
 		make install && \
@@ -92,16 +105,16 @@ install_fdkaac ()
 
 install_ffmpeg ()
 {
-	if [ ! -d ${build} ]; then
-		mkdir ${build}
-	fi
-	dir=${src}/ffmpeg
+	mkdir_if_not_exists $BUILD
+
+	dir=${SRC}/ffmpeg
 	cd ${dir}
+
 	./configure \
-		--prefix=${build} \
-		--extra-cflags="-I${build}/include" \
-		--extra-ldflags="-L${build}/lib" \
-		--bindir=${build}/bin \
+		--prefix=${BUILD} \
+		--extra-cflags="-I${BUILD}/include" \
+		--extra-ldflags="-L${BUILD}/lib" \
+		--bindir=${BUILD}/bin \
 		--enable-librtmp \
 		--enable-gpl \
 		--enable-libass \
