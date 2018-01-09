@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# place to clone git repository
+# place to clone libraries to install ffmpeg
 readonly SRC=/opt/vendor
 
 # place to install
 readonly BUILD=/opt/ffmpeg
 
-init_git_repos ()
+clone_vendors ()
 {
 	mkdir_if_not_exists $SRC
 
 	cd ${SRC}
-	git clone git://git.videolan.org/x264.git
-	git clone git://github.com/mstorsjo/fdk-aac.git
-	git clone git://source.ffmpeg.org/ffmpeg.git
+	[ ! -d ./x264 ] && git clone git://git.videolan.org/x264.git
+	[ ! -d ./fdk-aac ] && git clone git://github.com/mstorsjo/fdk-aac.git
+	[ ! -d ./ffmpeg ] && git clone git://source.ffmpeg.org/ffmpeg.git
 }
 
 
@@ -28,13 +28,6 @@ cd_and_git_pull() {
 	cd $SRC/$repo
 	make distclean
 	git pull
-}
-
-update_git_repos () {
-	for repo in x264 fdk-aac ffmpeg
-	do
-		cd_and_git_pull $repo
-	done
 }
 
 install_prerequisites() {
@@ -67,6 +60,7 @@ install_prerequisites() {
 
 install_x264 () {
 	mkdir_if_not_exists $BUILD
+	cd_and_git_pull x264
 
 	local dir=${SRC}/x264
 	cd ${dir}
@@ -91,6 +85,8 @@ install_x264 () {
 install_fdkaac ()
 {
 	mkdir_if_not_exists $BUILD
+	cd_and_git_pull fdk-aac
+
 
 	dir=${SRC}/fdk-aac
 	cd ${dir}
@@ -106,6 +102,7 @@ install_fdkaac ()
 install_ffmpeg ()
 {
 	mkdir_if_not_exists $BUILD
+	cd_and_git_pull ffmpeg
 
 	dir=${SRC}/ffmpeg
 	cd ${dir}
@@ -135,9 +132,8 @@ install_ffmpeg ()
 		. ~/.bash_profile
 }
 
-#init_git_repos
-#before_setup
-#update_git_repos
-#install_x264
-#install_fdkaac
-#install_ffmpeg
+install_prerequisites
+clone_vendors
+install_x264
+install_fdkaac
+install_ffmpeg
