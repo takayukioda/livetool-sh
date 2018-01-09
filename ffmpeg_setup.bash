@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # place to clone libraries to install ffmpeg
 readonly SRC=/opt/vendor
@@ -19,7 +19,7 @@ clone_vendors ()
 
 mkdir_if_not_exists() {
 	local dir=$1
-	[ ! -d $dir ] && echo "Running: mkdir $dir" && mkdir $dir
+	[ ! -d $dir ] && echo "Running: mkdir $dir" && sudo mkdir $dir && sudo chown $(users) $dir
 }
 
 cd_and_git_pull() {
