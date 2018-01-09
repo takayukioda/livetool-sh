@@ -3,62 +3,72 @@ livetool-sh
 
 shellscripts for live streaming by ffmpeg
 
+Prerequisites
+-------------
+
+### ffmpeg
+
+ffmpeg, compiled with `--enable-libx264` option is required.
+You may use other encoding libraries, but x264 is the most preferred library for streaming.
+
+To check if your current ffmpeg has that option, run following command.
+
+```shell
+$ ffmpeg -version | grep "--enable-libx264"
+```
+
+### curl
+
+To run `cavetube.bash`, curl is required to call some API endpoint.
+
 Directory
 ---------
 
 ```
 livetool-sh
-	|-ffmpeg_setup.sh
-	|
-	|-README.md
-	|-live.sh
-	|-default.profile
-	|-exec.list
-	|-rtmp.default
-	|
-	|-cavetube.sh
-	|-conf
-	|-default.desc
+  \_ .liverc
+  \_ cavetube.bash
+  \_ conf
+  \_ default.desc
+  \_ default.profile
+  \_ exec.list
+  \_ ffmpeg_setup.bash
+  \_ live.sh
+  \_ README.md
+  \_ rtmp.default
 ```
 
 ffmpeg_setup.sh
 ---------------
 
-"ffmpeg_setup.sh" is based on [UbuntuCompilationGuide](https://ffmpeg.org/trac/ffmpeg/wiki/UbuntuCompilationGuide).
-Wrap each install operation as function.  
-It will clone git repository to "/usr/local/git" where defined as src.  
-And build files will be install at "/usr/local/ffmpeg".
+	Note: Recent ubuntu seems to have `x264` option enabled.
+	Please try running without those manual installation; run `sudo apt install ffmpeg` instead.
 
-Requires
---------
+Use this script to install ffmpeg with an option of `--enable-libx264`.
+This script is made based on [UbuntuCompilationGuide](https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu).
 
-### live.sh  
+It manually build and install `fdk-aac`, `x264`, and `ffmpeg`.  
+ffmpeg will be installed into `/opt/ffmpeg`.
 
-ffmpeg with "--enable-libx264" option.  
-It may possible to run with other than libx264, but I haven't tried :P.
 
-### How to check ffmpeg
+.liverc
+-------
 
-Run `ffmpeg -version`.  
-Search for if it includes "--enable-libx264" in configuration list.
+For configuration, use `.liverc` as configuration file.
 
-### cavetube.sh
-
-curl
-
-Before You Run
---------------
-
-### live.sh
+### rtmp url and it's stream key
 
 set rtmp url and it's id in rtmp.default.  
 
 ```sh
 RTMP_URL="rtmp://rtmp.example.com/some/path"  
-STREAM="xxxxxyyyyyzzzzz"  
+STREAM_KEY="xxxxxyyyyyzzzzz"  
 ```
 
-### cavetube.sh
+CaveTube API Key
+----------------
+
+If you expect to start streaming in cavetube, you will need an API key to request prepare for streaming.
 
 Get your api key from [here](http://gae.cavelis.net/developer).  
 set "apikey" in file "conf" with the api key you've got from link above.  
